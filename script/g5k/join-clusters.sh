@@ -8,7 +8,7 @@ if [[ $# -ne 2 ]]; then
 fi
 
 joinLocalCluster () {
-  local cluster_nodes=( cat "${1}" )
+  local cluster_nodes=( $(cat "${1}") )
   local cluster_size=${#cluster_nodes[*]}
 
   local head="${cluster_nodes[0]}"
