@@ -40,7 +40,7 @@ joinNodes () {
 
     local offset=0
     for i in $(seq 0 ${total_dcs}); do
-      head -$((dc_size + offset)) "${ANT_NODES}" > .dc_nodes
+      head -$((dc_size + offset)) "${ANT_IPS}" > .dc_nodes
       joinLocalCluster .dc_nodes
       offset=$((offset + dc_size))
     done
