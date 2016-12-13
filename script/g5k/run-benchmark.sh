@@ -402,9 +402,10 @@ run () {
 
   setupTests "${dc_size}"
 
-  ./sync-time.sh --start
+  # TODO: Fix this
+  # ./sync-time.sh --start
   runTests "${dc_size}" "${total_dcs}"
-  ./sync-time.sh --stop
+  # ./sync-time.sh --stop
 }
 
 run
