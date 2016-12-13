@@ -314,16 +314,6 @@ distributeCookies () {
   echo -e "\t[DISTRIBUTE_COOKIES]: Done"
 }
 
-startNTPTimer () {
-  local timer_pid=$(./sync-time.sh --start)
-  echo "${timer_pid}"
-}
-
-stopNTPTimer () {
-  local timer_pid="${1}"
-  ./sync-time.sh --stop "${timer_pid}"
-}
-
 setupTests () {
   echo "[SETUP_TESTS]: Starting..."
 
@@ -409,9 +399,9 @@ run () {
 
   setupTests "${dc_size}"
 
-#  local ntp_timer=$(startNTPTimer)
+  ./sync-time.sh --start
   runTests "${dc_size}" "${total_dcs}"
-#  stopNTPTimer "${ntp_timer}"
+  ./sync-time.sh --stop
 }
 
 run
