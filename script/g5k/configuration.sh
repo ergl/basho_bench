@@ -23,9 +23,9 @@ PROVISION_IMAGES=true
 CLEAN_RUN=true
 
 # Number of "data centers" per g5k site
-# For example, saying DCS_PER_CLUSTER=2 and ANTIDOTE_NODES=1
+# For example, saying DCS_PER_SITE=2 and ANTIDOTE_NODES=1
 # will create 2 antidote nodes in total, one on each data center
-DCS_PER_CLUSTER=1
+DCS_PER_SITE=1
 
 # Number of nodes running Antidote per DC
 ANTIDOTE_NODES=1
