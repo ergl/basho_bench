@@ -17,7 +17,7 @@ sites=( "${SITES[@]}" )
 
 buildReservation () {
   local reservation
-  local node_number=$((DCS_PER_CLUSTER * (ANTIDOTE_NODES + BENCH_NODES)))
+  local node_number=$((DCS_PER_SITE * (ANTIDOTE_NODES + BENCH_NODES)))
   for site in "${sites[@]}"; do
     reservation+="${site}:rdef=/nodes=${node_number},"
   done
@@ -100,8 +100,8 @@ getIPs () {
 gatherMachines () {
   echo "[GATHER_MACHINES]: Starting..."
 
-  local antidote_nodes_per_site=$((DCS_PER_CLUSTER * ANTIDOTE_NODES))
-  local benchmark_nodes_per_site=$((DCS_PER_CLUSTER * BENCH_NODES))
+  local antidote_nodes_per_site=$((DCS_PER_SITE * ANTIDOTE_NODES))
+  local benchmark_nodes_per_site=$((DCS_PER_SITE * BENCH_NODES))
 
   [[ -f ${ALL_NODES} ]] && rm ${ALL_NODES}
   [[ -f ${ANT_NODES} ]] && rm ${ANT_NODES}
@@ -135,7 +135,7 @@ gatherMachines () {
 getTotalDCCount () {
   # FIX: Assumes that all sites have the same number of data centers
   local sites_size=$((${#sites[*]} - 1))
-  local total_dcs=$(( (sites_size + 1) * DCS_PER_CLUSTER))
+  local total_dcs=$(( (sites_size + 1) * DCS_PER_SITE))
   echo ${total_dcs}
 }
 
@@ -145,7 +145,7 @@ getDCSize () {
   # All sites have the same number of nodes, so it doesn't matter which one we pick
   local any_site="${sites[0]}"
   local site_antidote_node_size=$(grep -c -o ${any_site} ${ANT_NODES})
-  local dc_size=$((site_antidote_node_size / DCS_PER_CLUSTER))
+  local dc_size=$((site_antidote_node_size / DCS_PER_SITE))
   echo ${dc_size}
 }
 
