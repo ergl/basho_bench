@@ -180,7 +180,7 @@ kadeployNodes () {
 
 
 provisionBench () {
-  echo -e "\t[PROVISION_BENCH]: Starting..."
+  echo -e "\t[PROVISION_BENCH_NODES]: Starting..."
 
   local ts=$1
   for i in $(seq 1 ${BENCH_INSTANCES}); do
@@ -197,12 +197,12 @@ provisionBench () {
 
   done
 
-  echo -e "\t[PROVISION_BENCH]: Done"
+  echo -e "\t[PROVISION_BENCH_NODES]: Done"
 }
 
 
 provisionAntidote () {
-  echo -e "\t[PROVISION_ANTIDOTE]: Starting..."
+  echo -e "\t[PROVISION_ANTIDOTE_NODES]: Starting... (This may take a while)"
 
   local ts=$1
   local command="\
@@ -214,7 +214,7 @@ provisionAntidote () {
   doForNodesIn ${ALL_NODES} "${command}" \
     >> "${LOGDIR}/antidote-compile-and-config-job${ts}" 2>&1
 
-  echo -e "\t[PROVISION_ANTIDOTE]: Done"
+  echo -e "\t[PROVISION_ANTIDOTE_NODES]: Done"
 }
 
 
