@@ -154,9 +154,10 @@ kadeployNodes () {
   for site in "${sites[@]}"; do
     echo -e "\t[SYNC_IMAGE_${sites}]: Starting..."
 
-    # TODO: Assumes that both the source and target directory exit
-    rsync -r ~/public/antidote-images/latest \
-                ${site}:/home/$(whoami)/public/antidote-images/latest
+    local image_dir="$(dirname "${K3_IMAGE}")"
+    # rsync can only create dirs up to two levels deep, so we create it just in case
+    ssh ${site} "mkdir -p ${image_dir}"
+    rsync -r "${image_dir}" ${site}:"${image_dir}"
 
     echo -e "\t[SYNC_IMAGE_${sites}]: Done"
 
