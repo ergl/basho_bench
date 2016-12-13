@@ -5,17 +5,18 @@ if [[ $# -ne 1 ]]; then
 fi
 
 ntpClock () {
-  while true; do
+  while :
+  do
     service ntp stop
-    /usr/sbin/ntpdate -b ntp2.grid5000.fr
+    /usr/sbin/ntpdate -b ntp2.grid5000.fr > /dev/null 2>&1
     service ntp start
     sleep 60
-  done
+  done &
+  echo "${!}"
 }
 
 start () {
-  ntpClock &
-  echo "$!" > .ntp_timer_pid
+  ntpClock > .ntp_timer_pid
 }
 
 stop () {
