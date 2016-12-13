@@ -50,6 +50,8 @@ if [[ "${RESERVE_SITES}" == "true" ]]; then
   sed -i.bak '/^GRID_JOB_ID.*/d' configuration.sh
   echo "GRID_JOB_ID=${GRID_JOB_ID}" >> configuration.sh
   echo "[RESERVING_SITES]: Done. Successfully reserved with id ${GRID_JOB_ID}"
+else
+  echo "[RESERVING_SITES]: Skipping"
 fi
 
 # Delete the reservation if script is killed
