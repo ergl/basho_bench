@@ -5,11 +5,11 @@ run () {
   local total_dcs=$2
 
   echo "[STOP_ANTIDOTE]: Starting..."
-  ./stop-nodes.sh
+  ./control-nodes.sh --stop
   echo "[STOP_ANTIDOTE]: Done"
 
   echo "[START_ANTIDOTE]: Starting..."
-  ./start-nodes.sh
+  ./control-nodes.sh --start
   echo "[START_ANTIDOTE]: Done"
 
   echo "[BUILD_CLUSTER]: Starting..."
