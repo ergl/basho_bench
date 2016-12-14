@@ -185,7 +185,7 @@ provisionBench () {
       make all
     "
 
-    doForNodesIn ${ALL_NODES} "${command}" \
+    doForNodesIn ${BENCH_NODEF} "${command}" \
       >> "${LOGDIR}/basho_bench-compile-job${ts}" 2>&1
 
   done
@@ -204,6 +204,8 @@ provisionAntidote () {
     cd antidote && \
     make relnocert
   "
+  # We need antidote in all nodes even if we don't use it
+  # basho_bench will need the sources to start
   doForNodesIn ${ALL_NODES} "${command}" \
     >> "${LOGDIR}/antidote-compile-and-config-job${ts}" 2>&1
 
