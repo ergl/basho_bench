@@ -16,5 +16,5 @@ Take a look at /script/g5k/configuration.sh
 9. Run the configuration  (The directory you execute from doesn't matter):
 
   ```
-  ./basho_bench/script/g5k/run-benchmark.sh
+  ./basho_bench/script/g5k/main.sh
   ```
