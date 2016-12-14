@@ -64,7 +64,7 @@ export EXPERIMENT_PRIVATE_KEY=${SCRATCHFOLDER}/key
 EXPERIMENT_PUBLIC_KEY=${SCRATCHFOLDER}/exp_key.pub
 
 export ALL_NODES=${SCRATCHFOLDER}/.all_nodes
-BENCH_NODEF=${SCRATCHFOLDER}/.bench_nodes
+export BENCH_NODEF=${SCRATCHFOLDER}/.bench_nodes
 export ANT_NODES=${SCRATCHFOLDER}/.antidote_nodes
 
 export ALL_IPS=${SCRATCHFOLDER}/.all_ips
@@ -319,11 +319,10 @@ setupTests () {
 }
 
 runTests () {
-  local dc_size=${ANTIDOTE_NODES}
   local total_dcs=$(getTotalDCCount)
 
   echo "[RUNNING_TEST]: Starting..."
-  ./prepare-clusters.sh ${dc_size} ${total_dcs}
+  ./run-benchmark.sh ${total_dcs}
   echo "[RUNNING_TEST]: Done"
 }
 
