@@ -39,7 +39,7 @@ joinNodes () {
     echo -e "\t[BUILDING_LOCAL_CLUSTER]: Starting..."
 
     local offset=0
-    for i in $(seq 1 ${total_dcs}); do
+    for _ in $(seq 1 ${total_dcs}); do
       head -$((dc_size + offset)) "${ANT_IPS}" > .dc_nodes
       joinLocalCluster .dc_nodes
       offset=$((offset + dc_size))
