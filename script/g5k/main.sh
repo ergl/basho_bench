@@ -134,8 +134,8 @@ gatherMachines () {
 # Calculates the number of datacenters in the benchmark
 getTotalDCCount () {
   # FIX: Assumes that all sites have the same number of data centers
-  local sites_size=$((${#sites[*]} - 1))
-  local total_dcs=$(( (sites_size + 1) * DCS_PER_SITE))
+  local sites_size=${#sites[*]}
+  local total_dcs=$(( sites_size * DCS_PER_SITE))
   echo ${total_dcs}
 }
 
