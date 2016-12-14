@@ -139,16 +139,6 @@ getTotalDCCount () {
   echo ${total_dcs}
 }
 
-
-# Number of antidote nodes in each datacenter
-getDCSize () {
-  # All sites have the same number of nodes, so it doesn't matter which one we pick
-  local any_site="${sites[0]}"
-  local site_antidote_node_size=$(grep -c -o ${any_site} ${ANT_NODES})
-  local dc_size=$((site_antidote_node_size / DCS_PER_SITE))
-  echo ${dc_size}
-}
-
 # Use kadeploy to provision all the machines
 kadeployNodes () {
   for site in "${sites[@]}"; do
@@ -320,15 +310,16 @@ distributeCookies () {
 setupTests () {
   echo "[SETUP_TESTS]: Starting..."
 
-  local dc_size=$1
+  local dc_size=${ANTIDOTE_NODES}
   ./change-partition-size.sh ${dc_size}
 
   echo "[SETUP_TESTS]: Done"
 }
 
 runTests () {
-  local dc_size=$1
-  local total_dcs=$2
+  local dc_size=${ANTIDOTE_NODES}
+  local total_dcs=$(getTotalDCCount)
+
   echo "[RUNNING_TEST]: Starting..."
   ./prepare-clusters.sh ${dc_size} ${total_dcs}
   echo "[RUNNING_TEST]: Done"
@@ -368,8 +359,8 @@ setupCluster () {
 # basho_bench.
 # Also create and distribute the erlang cookies to all nodes.
 configCluster () {
-  local ts=$1
-  local total_dcs=$2
+  local ts=$(date +"%Y-%m-%d-%s")
+  local total_dcs=$(getTotalDCCount)
 
   if [[ "${PROVISION_IMAGES}" == "true" ]]; then
     echo "[PROVISION_NODES]: Starting..."
@@ -393,19 +384,12 @@ configCluster () {
 
 run () {
   setupScript
+
   setupCluster
+  configCluster
 
-  local timestamp=$(date +"%Y-%m-%d-%s")
-  local total_dcs=$(getTotalDCCount)
-  local dc_size=$(getDCSize)
-  configCluster ${timestamp} ${total_dcs}
-
-  setupTests "${dc_size}"
-
-  # TODO: Fix this
-  # ./sync-time.sh --start
-  runTests "${dc_size}" "${total_dcs}"
-  # ./sync-time.sh --stop
+  setupTests
+  runTests
 }
 
 run
