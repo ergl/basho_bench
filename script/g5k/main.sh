@@ -12,7 +12,7 @@ fi
 cd $(dirname "$SELF")
 
 source ./configuration.sh
-
+declare GLOBAL_TIMESTART=$(date +"%Y-%m-%d-%s")
 sites=( "${SITES[@]}" )
 
 buildReservation () {
@@ -175,7 +175,6 @@ kadeployNodes () {
 provisionBench () {
   echo -e "\t[PROVISION_BENCH_NODES]: Starting..."
 
-  local ts=$1
   for i in $(seq 1 ${BENCH_INSTANCES}); do
     local bench_folder="basho_bench${i}"
     local command="\
@@ -186,7 +185,7 @@ provisionBench () {
     "
 
     doForNodesIn ${BENCH_NODEF} "${command}" \
-      >> "${LOGDIR}/basho_bench-compile-job${ts}" 2>&1
+      >> "${LOGDIR}/basho_bench-compile-job-${GLOBAL_TIMESTART}" 2>&1
 
   done
 
@@ -197,7 +196,6 @@ provisionBench () {
 provisionAntidote () {
   echo -e "\t[PROVISION_ANTIDOTE_NODES]: Starting... (This may take a while)"
 
-  local ts=$1
   local command="\
     rm -rf antidote && \
     git clone ${ANTIDOTE_URL} --branch ${ANTIDOTE_BRANCH} --single-branch antidote && \
@@ -207,7 +205,7 @@ provisionAntidote () {
   # We need antidote in all nodes even if we don't use it
   # basho_bench will need the sources to start
   doForNodesIn ${ALL_NODES} "${command}" \
-    >> "${LOGDIR}/antidote-compile-and-config-job${ts}" 2>&1
+    >> "${LOGDIR}/antidote-compile-and-config-job-${GLOBAL_TIMESTART}" 2>&1
 
   echo -e "\t[PROVISION_ANTIDOTE_NODES]: Done"
 }
@@ -215,8 +213,6 @@ provisionAntidote () {
 
 rebuildAntidote () {
   echo -e "\t[REBUILD_ANTIDOTE]: Starting..."
-
-  local ts=$1
   local command="\
     cd antidote; \
     pkill beam; \
@@ -227,7 +223,7 @@ rebuildAntidote () {
   "
   # We use the IPs here so that we can change the default (127.0.0.1)
   doForNodesIn ${ANT_IPS} "${command}" \
-    >> "${LOGDIR}/config-antidote-${ts}" 2>&1
+    >> "${LOGDIR}/config-antidote-${GLOBAL_TIMESTART}" 2>&1
 
   echo -e "\t[REBUILD_ANTIDOTE]: Done"
 }
@@ -235,7 +231,6 @@ rebuildAntidote () {
 cleanAntidote () {
   echo -e "\t[CLEAN_ANTIDOTE]: Starting..."
 
-  local ts=$1
   local command="\
     cd antidote; \
     pkill beam; \
@@ -243,7 +238,7 @@ cleanAntidote () {
     make relnocert
   "
   doForNodesIn ${ANT_IPS} "${command}" \
-    >> ${LOGDIR}/clean-antidote-${ts} 2>&1
+    >> ${LOGDIR}/clean-antidote-${GLOBAL_TIMESTART} 2>&1
 
   echo -e "\t[CLEAN_ANTIDOTE]: Done"
 }
@@ -251,10 +246,8 @@ cleanAntidote () {
 
 # Provision all the nodes with Antidote and Basho Bench
 provisionNodes () {
-  local ts=$1
-
-  provisionAntidote ${ts}
-  provisionBench ${ts}
+  provisionAntidote
+  provisionBench
 }
 
 
@@ -291,7 +284,6 @@ createCookies () {
 distributeCookies () {
   echo -e "\t[DISTRIBUTE_COOKIES]: Starting..."
 
-  local ts=$1
   local cookie_array=($(cat ${ALL_COOKIES}))
   local cookie_dev_config="antidote/rel/vars/dev_vars.config.src"
   local cookie_config="antidote/config/vars.config"
@@ -322,7 +314,7 @@ runTests () {
   local total_dcs=$(getTotalDCCount)
 
   echo "[RUNNING_TEST]: Starting..."
-  ./run-benchmark.sh ${total_dcs}
+  ./run-benchmark.sh ${total_dcs} >> ${LOGDIR}/basho-bench-execution-${GLOBAL_TIMESTART} 2>&1
   echo "[RUNNING_TEST]: Done"
 }
 
@@ -360,12 +352,11 @@ setupCluster () {
 # basho_bench.
 # Also create and distribute the erlang cookies to all nodes.
 configCluster () {
-  local ts=$(date +"%Y-%m-%d-%s")
   local total_dcs=$(getTotalDCCount)
 
   if [[ "${PROVISION_IMAGES}" == "true" ]]; then
     echo "[PROVISION_NODES]: Starting..."
-    provisionNodes ${ts}
+    provisionNodes
     echo "[PROVISION_NODES]: Done"
   else
     echo "[PROVISION_NODES]: Skipping"
@@ -373,12 +364,12 @@ configCluster () {
 
   if [[ "${CLEAN_RUN}" == "true" ]]; then
     echo "[CLEAN_RUN]: Starting..."
-    rebuildAntidote ${ts}
+    rebuildAntidote
     createCookies ${total_dcs}
-    distributeCookies ${ts}
+    distributeCookies
     echo "[CLEAN_RUN]: Done"
   else
-    cleanAntidote ${ts}
+    cleanAntidote
   fi
 }
 
