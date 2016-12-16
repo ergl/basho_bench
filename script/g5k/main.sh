@@ -162,7 +162,7 @@ kadeployNodes () {
 
     $(
       ssh -t -o StrictHostKeyChecking=no ${site} "${command}" \
-        > ${LOGDIR}/${site}-kadeploy 2>&1
+        > ${LOGDIR}/${site}-kadeploy-${GLOBAL_TIMESTART} 2>&1
     ) &
 
     echo -e "\t[DEPLOY_IMAGE_${sites}]: In progress"
