@@ -117,12 +117,13 @@ collectAll () {
   local n_instances="$1"
   local config_file="$2"
   local ratio="$3"
+  local own_node_name="${HOSTNAME::-12}" # remove the .grid5000.fr part of the name
   for i in $(seq 1 ${n_instances}); do
     local bench_folder="./basho_bench${i}"
     pushd "${bench_folder}" > /dev/null 2>&1
 
     local test_folder="./tests/"
-    local result_f_name="test${i}-${config_file}-${ratio}.tar"
+    local result_f_name="test${i}-${own_node_name}-${config_file}-${ratio}.tar"
 
     tar czf /root/"${result_f_name}" "${test_folder}"
     popd > /dev/null 2>&1
