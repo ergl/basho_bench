@@ -59,6 +59,7 @@ trap 'echo "${0##*/}: cancelling"; oargriddel ${GRID_JOB_ID}; exit 1' SIGINT SIG
 
 SCRATCHFOLDER="/home/$(whoami)/grid-benchmark-${GRID_JOB_ID}"
 export LOGDIR=${SCRATCHFOLDER}/logs
+RESULTSDIR=${SCRATCHFOLDER}/results
 
 export EXPERIMENT_PRIVATE_KEY=${SCRATCHFOLDER}/key
 EXPERIMENT_PUBLIC_KEY=${SCRATCHFOLDER}/exp_key.pub
@@ -316,6 +317,27 @@ runTests () {
   echo "[RUNNING_TEST]: Starting..."
   ./run-benchmark.sh ${total_dcs} >> ${LOGDIR}/basho-bench-execution-${GLOBAL_TIMESTART} 2>&1
   echo "[RUNNING_TEST]: Done"
+}
+
+collectResults () {
+  echo "[COLLECTING_RESULTS]: Starting..."
+  [[ -d "${RESULTSDIR}" ]] && rm -r "${RESULTSDIR}"
+  mkdir -p "${RESULTSDIR}"
+  local bench_nodes=( $(< ${BENCH_NODEF}) )
+  for node in "${bench_nodes[@]}"; do
+    scp -i ${EXPERIMENT_PRIVATE_KEY} root@${node}:/root/test* "${RESULTSDIR}"
+  done
+  echo "[COLLECTING_RESULTS]: Done"
+
+  echo "[MERGING_RESULTS]: Starting..."
+  ./merge-results.sh "${RESULTSDIR}"
+  echo "[MERGING_RESULTS]: Done"
+
+  pushd "${RESULTSDIR}"
+  local tar_name=$(basename "${RESULTSDIR}")
+  tar czf "${tar_name}".tar .
+  mv "${tar_name}" "${SCRATCHFOLDER}"
+  popd
 }
 
 
