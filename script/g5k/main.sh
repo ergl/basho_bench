@@ -333,11 +333,10 @@ collectResults () {
   ./merge-results.sh "${RESULTSDIR}"
   echo "[MERGING_RESULTS]: Done"
 
-  pushd "${RESULTSDIR}"
+  pushd "${RESULTSDIR}" > /dev/null 2>&1
   local tar_name=$(basename "${RESULTSDIR}")
-  tar czf "${tar_name}".tar .
-  mv "${tar_name}" "${SCRATCHFOLDER}"
-  popd
+  tar -czf ../"${tar_name}".tar .
+  popd > /dev/null 2>&1
 }
 
 
