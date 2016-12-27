@@ -147,17 +147,18 @@ kadeployNodes () {
 
     local image_dir="$(dirname "${K3_IMAGE}")"
     # rsync can only create dirs up to two levels deep, so we create it just in case
-    ssh ${site} "mkdir -p ${image_dir}"
+    ssh -o StrictHostKeyChecking=no ${site} "mkdir -p ${image_dir}"
     rsync -r "${image_dir}" ${site}:"${image_dir}"
+    rsync -r "${SCRATCHFOLDER}"/* ${site}:"${SCRATCHFOLDER}"
 
-    echo -e "\t[SYNC_IMAGE_${sites}]: Done"
+    echo -e "\t[SYNC_IMAGE_${site}]: Done"
 
-    echo -e "\t[DEPLOY_IMAGE_${sites}]: Starting..."
+    echo -e "\t[DEPLOY_IMAGE_${site}]: Starting..."
 
     local command="\
       oargridstat -w -l ${GRID_JOB_ID} \
         | sed '/^$/d' \
-        | awk '/${sites}/ {print $1}' > ~/.todeploy && \
+        | awk '/${site}/ {print $1}' > ~/.todeploy && \
       kadeploy3 -f ~/.todeploy -a ${K3_IMAGE} -k ${EXPERIMENT_PUBLIC_KEY}
     "
 
@@ -166,7 +167,7 @@ kadeployNodes () {
         > ${LOGDIR}/${site}-kadeploy-${GLOBAL_TIMESTART} 2>&1
     ) &
 
-    echo -e "\t[DEPLOY_IMAGE_${sites}]: In progress"
+    echo -e "\t[DEPLOY_IMAGE_${site}]: In progress"
   done
   echo "[DEPLOY_IMAGE]: Waiting. (This may take a while)"
   wait
