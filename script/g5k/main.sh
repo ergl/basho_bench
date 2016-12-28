@@ -193,7 +193,7 @@ provisionBench () {
     "
 
     doForNodesIn ${BENCH_NODEF} "${command}" \
-      >> "${LOGDIR}/basho_bench-compile-job-${GLOBAL_TIMESTART}" 2>&1
+      >> "${LOGDIR}/basho-bench-compile-job-${GLOBAL_TIMESTART}" 2>&1
 
   done
 
