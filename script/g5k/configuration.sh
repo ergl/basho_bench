@@ -35,9 +35,9 @@ BENCH_NODES=1
 BENCH_INSTANCES=1
 
 # git repository of the antidote code (useful to test forks)
-ANTIDOTE_URL="https://github.com/SyncFree/antidote.git"
+ANTIDOTE_URL="https://github.com/ergl/antidote.git"
 # git branch of antidote to run the experiment on
-ANTIDOTE_BRANCH="build-local-cluster"
+ANTIDOTE_BRANCH="fix-join-scripts"
 
 # git repository of the basho_bench code (useful to test forks)
 BENCH_URL="https://github.com/SyncFree/basho_bench.git"
