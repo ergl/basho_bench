@@ -119,18 +119,25 @@ gatherMachines () {
   oargridstat -w -l ${GRID_JOB_ID} | sed '/^$/d' \
     | awk '!seen[$0]++' > ${ALL_NODES}
 
-  # For each site, get the list of nodes and slice
-  # them into antidote and basho bench lists, depending on
-  # the configuration given.
+  # Slice each site node list into antidote and basho_bench lists
   for site in "${sites[@]}"; do
-    awk < ${ALL_NODES} "/${site}/ {print $1}" \
-      | tee >(head -${antidote_nodes_per_site} >> ${ANT_NODES}) \
-      | sed "1,${antidote_nodes_per_site}d" \
-      | head -${benchmark_nodes_per_site} >> ${BENCH_NODEF}
+    local site_local=$(awk "/${site}/ {print $1}" ${ALL_IPS})
+
+    echo "${site_local}" | head -${antidote_nodes_per_site} >> ${ANT_NODES}
+
+    if [[ ${benchmark_nodes_per_site} -ge 1 ]]; then
+      echo "${site_local}" \
+        | sed "1,${antidote_nodes_per_site}d" \
+        | head -${benchmark_nodes_per_site} >> ${BENCH_NODEF}
+    fi
   done
 
   # Override the full node list, in case we didn't pick all the nodes
-  cat ${BENCH_NODEF} ${ANT_NODES} > ${ALL_NODES}
+  if [[ -f ${BENCH_NODEF} ]]; then
+    cat ${BENCH_NODEF} ${ANT_NODES} > ${ALL_NODES}
+  else
+    cat ${ANT_NODES} > ${ALL_NODES}
+  fi
 
   getIPs
 
