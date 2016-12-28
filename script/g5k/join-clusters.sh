@@ -27,6 +27,29 @@ joinLocalDC () {
   ./execute-in-nodes.sh "${head}" "${join_dc}" "-debug"
 }
 
+joinInterDCCluster() {
+  local dc_size=$1
+  local total_dcs=$2
+
+  local head=$(head -1 ${ANT_IPS})
+
+  # Get only one antidote node per DC
+  local i=1
+  local nodes_str
+  while [[ i -lt ${total_dcs} ]]; do
+    nodes_str+="'antidote@$(sed -n "${i}p" ${ANT_IPS})' "
+    i=$((i + dc_size))
+  done
+
+  nodes_str=${nodes_str%?}
+
+  local join_cluster="\
+    ./antidote/bin/join_cluster_script.erl ${nodes_str}
+  "
+
+  ./execute-in-nodes.sh "${head}" "${join_cluster}" "-debug"
+}
+
 
 joinNodes () {
   local dc_size=$1
@@ -54,8 +77,8 @@ joinNodes () {
     exit
   fi
 
-  # TODO: Join only one node per dc
   echo -e "\t[INTER_DC_CLUSTERING]: Starting..."
+  joinInterDCCluster ${dc_size} ${total_dcs}
   echo -e "\t[INTER_DC_CLUSTERING]: Done"
 }
 
