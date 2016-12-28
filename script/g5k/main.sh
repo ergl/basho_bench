@@ -86,7 +86,7 @@ BENCH_COOKIES=${SCRATCHFOLDER}/.bench_cookies
 # For each node / ip in a file (one each line),
 # ssh into it and run the given command
 doForNodesIn () {
-  ./execute-in-nodes.sh "$(cat "$1")" "$2" "-debug"
+  ./execute-in-nodes.sh "$(cat "$1")" "$2"
 }
 
 
