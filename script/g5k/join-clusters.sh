@@ -7,24 +7,24 @@ if [[ $# -ne 2 ]]; then
   exit 1
 fi
 
-joinLocalCluster () {
-  local cluster_nodes=( $(cat "${1}") )
-  local cluster_size=${#cluster_nodes[*]}
+joinLocalDC () {
+  local dc_nodes=( $(cat "${1}") )
+  local dc_size=${#dc_nodes[*]}
 
-  local head="${cluster_nodes[0]}"
+  local head="${dc_nodes[0]}"
 
   local nodes_str
-  for node in "${cluster_nodes[@]}"; do
+  for node in "${dc_nodes[@]}"; do
     nodes_str+="'antidote@${node}' "
   done
 
   nodes_str=${nodes_str%?}
 
-  local join_command="\
+  local join_dc="\
     ./antidote/bin/join_cluster_script.erl ${nodes_str}
   "
 
-  ./execute-in-nodes.sh "${head}" "${join_command}" "-debug"
+  ./execute-in-nodes.sh "${head}" "${join_dc}" "-debug"
 }
 
 
@@ -41,7 +41,7 @@ joinNodes () {
     local offset=0
     for _ in $(seq 1 ${total_dcs}); do
       head -$((dc_size + offset)) "${ANT_IPS}" > .dc_nodes
-      joinLocalCluster .dc_nodes
+      joinLocalDC .dc_nodes
       offset=$((offset + dc_size))
     done
 
