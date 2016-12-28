@@ -154,7 +154,7 @@ kadeployNodes () {
     local image_dir="$(dirname "${K3_IMAGE}")"
     # rsync can only create dirs up to two levels deep, so we create it just in case
     ssh -o StrictHostKeyChecking=no ${site} "mkdir -p ${image_dir}"
-    rsync -r "${image_dir}" ${site}:"${image_dir}"
+    rsync "${image_dir}"/* ${site}:"${image_dir}"
     rsync -r "${SCRATCHFOLDER}"/* ${site}:"${SCRATCHFOLDER}"
 
     echo -e "\t[SYNC_IMAGE_${site}]: Done"
