@@ -58,6 +58,9 @@ run () {
 
   prepareTests ${total_dcs} "${antidote_ip_file}"
 
+  echo "Stopping just before running benchmark. Clustering done"
+  exit 5
+
   local bench_instances="${BENCH_INSTANCES}"
   local benchmark_configuration_file="${BENCH_FILE}"
   runRemoteBenchmark "${bench_instances}" "${benchmark_configuration_file}" "${antidote_ip_file}"
