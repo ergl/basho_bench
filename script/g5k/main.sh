@@ -47,6 +47,12 @@ reserveSites () {
 if [[ "${RESERVE_SITES}" == "true" ]]; then
   echo "[RESERVING_SITES]: Starting..."
   export GRID_JOB_ID=$(reserveSites)
+
+  if [[ -z "${GRID_JOB_ID}" ]]; then
+    echo "Uh-oh! Something went wrong while reserving. Maybe try again?"
+    exit 1
+  fi
+
   sed -i.bak '/^GRID_JOB_ID.*/d' configuration.sh
   echo "GRID_JOB_ID=${GRID_JOB_ID}" >> configuration.sh
   echo "[RESERVING_SITES]: Done. Successfully reserved with id ${GRID_JOB_ID}"
