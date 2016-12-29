@@ -44,6 +44,19 @@ reserveSites () {
   echo "${res_id## }"
 }
 
+promptJobCancel() {
+  local grid_job="$1"
+  local response
+  read -r -n 1 -p "Want to cancel reservation? [y/n] " response
+  case "${response}" in
+    [yY] )
+      oargriddel "${grid_job}"
+      exit 1 ;;
+    *)
+      exit 0 ;;
+  esac
+}
+
 if [[ "${RESERVE_SITES}" == "true" ]]; then
   echo "[RESERVING_SITES]: Starting..."
   export GRID_JOB_ID=$(reserveSites)
@@ -61,7 +74,7 @@ else
 fi
 
 # Delete the reservation if script is killed
-trap 'echo "${0##*/}: cancelling"; oargriddel ${GRID_JOB_ID}; exit 1' SIGINT SIGTERM
+trap 'cancelJob ${GRID_JOB_ID}' SIGINT SIGTERM
 
 SCRATCHFOLDER="/home/$(whoami)/grid-benchmark-${GRID_JOB_ID}"
 export LOGDIR=${SCRATCHFOLDER}/logs
