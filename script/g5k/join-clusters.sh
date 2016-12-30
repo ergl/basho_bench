@@ -64,7 +64,7 @@ joinNodes () {
     local offset=0
     for _ in $(seq 1 ${total_dcs}); do
       head -$((dc_size + offset)) "${ANT_IPS}" > .dc_nodes
-      joinLocalDC .dc_nodes
+      joinLocalDC .dc_nodes >> "${LOGDIR}"/join-local-dc${GLOBAL_TIMESTART} 2>&1
       offset=$((offset + dc_size))
     done
 
@@ -78,7 +78,7 @@ joinNodes () {
   fi
 
   echo -e "\t[INTER_DC_CLUSTERING]: Starting..."
-  joinInterDCCluster ${dc_size} ${total_dcs}
+  joinInterDCCluster ${dc_size} ${total_dcs} >> "${LOGDIR}"/join-inter-dc${GLOBAL_TIMESTART} 2>&1
   echo -e "\t[INTER_DC_CLUSTERING]: Done"
 }
 

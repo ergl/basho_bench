@@ -12,7 +12,7 @@ fi
 cd $(dirname "$SELF")
 
 source ./configuration.sh
-declare GLOBAL_TIMESTART=$(date +"%Y-%m-%d-%s")
+export GLOBAL_TIMESTART=$(date +"%Y-%m-%d-%s")
 sites=( "${SITES[@]}" )
 
 buildReservation () {
